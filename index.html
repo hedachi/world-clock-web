@@ -162,7 +162,7 @@
 
     <script>
         const wdays = ['日', '月', '火', '水', '木', '金', '土'];
-        const baseHours = [0, 4, 8, 12, 16, 20];
+        const baseHours = [4, 8, 12, 16, 20, 0];
         
         function isBST(date) {
             const month = date.getMonth() + 1;
@@ -291,9 +291,6 @@
             currentRow.className = 'clock-display';
             currentRow.style.background = '#f0f0f0';
             currentRow.style.border = '1px solid #ddd';
-            currentRow.style.borderRadius = '4px';
-            currentRow.style.padding = '4px';
-            currentRow.style.marginBottom = '8px';
             
             // 各地域の現在時刻を計算
             const jstNow = new Date();
@@ -337,11 +334,6 @@
             }
             container.appendChild(currentRow);
             
-            // 区切り線を追加
-            const divider = document.createElement('div');
-            divider.style.borderBottom = '1px solid #e0e0e0';
-            divider.style.margin = '10px 0';
-            container.appendChild(divider);
             
             const today = new Date();
             today.setHours(0, 0, 0, 0);
