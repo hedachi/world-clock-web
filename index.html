@@ -141,12 +141,6 @@
                 display: none;
             }
             
-            .current-label {
-                display: block;
-                text-align: center;
-                margin-top: 6px;
-                font-size: 16px;
-            }
             
             /* 区切り線を非表示 */
             .clock-display + div[style*="border-bottom"] {
@@ -247,12 +241,11 @@
             // 現在時刻を最初の行として追加
             const currentRow = document.createElement('div');
             currentRow.className = 'clock-display';
-            currentRow.style.background = 'linear-gradient(135deg, #3a4d5e 0%, #2a3d4e 100%)';
-            currentRow.style.border = '2px solid #4ec9b0';
-            currentRow.style.borderRadius = '6px';
-            currentRow.style.padding = '8px';
-            currentRow.style.marginBottom = '12px';
-            currentRow.style.boxShadow = '0 2px 8px rgba(78, 201, 176, 0.3)';
+            currentRow.style.background = '#272727';
+            currentRow.style.border = '1px solid #444';
+            currentRow.style.borderRadius = '4px';
+            currentRow.style.padding = '4px';
+            currentRow.style.marginBottom = '8px';
             
             // 各地域の現在時刻を計算
             const jstNow = new Date();
@@ -285,10 +278,10 @@
             if (window.innerWidth <= 768) {
                 currentRow.innerHTML = `
                     <div class="time-group">
-                        <div class="time-item" style="background: #2a4d5e;">${formatTime(jstNow, '日本')}</div>
-                        <div class="time-item" style="background: #2a4d5e;">${formatTime(ukNowAdjusted, 'イギリス')}</div>
-                        <div class="time-item" style="background: #2a4d5e;">${formatTime(sfNowAdjusted, 'SF')}</div>
-                        <div class="time-item" style="background: #2a4d5e;">${formatTime(nyNowAdjusted, 'NY')}</div>
+                        <div class="time-item" style="background: #252525;">${formatTime(jstNow, '日本')}</div>
+                        <div class="time-item" style="background: #252525;">${formatTime(ukNowAdjusted, 'イギリス')}</div>
+                        <div class="time-item" style="background: #252525;">${formatTime(sfNowAdjusted, 'SF')}</div>
+                        <div class="time-item" style="background: #252525;">${formatTime(nyNowAdjusted, 'NY')}</div>
                     </div>
                 `;
             } else {
