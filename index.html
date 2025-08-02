@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: 'Courier New', monospace;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
+            background-color: #f5f5f5;
+            color: #333333;
             padding: 10px;
             margin: 0;
             min-height: 100vh;
@@ -18,9 +18,9 @@
         }
         
         .container {
-            background-color: #2d2d2d;
+            background-color: #ffffff;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             max-width: 900px;
             width: 100%;
             margin: 0;
@@ -28,7 +28,7 @@
         
         h1 {
             text-align: center;
-            color: #569cd6;
+            color: #2563eb;
             margin-bottom: 30px;
             font-size: 24px;
         }
@@ -36,7 +36,7 @@
         .clock-display {
             margin-bottom: 8px;
             padding: 8px 12px;
-            background-color: #1e1e1e;
+            background-color: #f8f8f8;
             border-radius: 4px;
             font-size: 14px;
             line-height: 1.6;
@@ -60,23 +60,23 @@
         }
         
         .clock-display:hover {
-            background-color: #252526;
+            background-color: #efefef;
         }
         
         .time-label {
-            color: #4ec9b0;
+            color: #2c7a7b;
         }
         
         .date {
-            color: #dcdcaa;
+            color: #744210;
         }
         
         .day {
-            color: #ce9178;
+            color: #9c4221;
         }
         
         .separator {
-            color: #808080;
+            color: #a0a0a0;
         }
         
         @media (max-width: 768px) {
@@ -130,11 +130,14 @@
                 padding: 5px 6px;
                 text-align: left;
                 font-size: 15px;
-                background-color: #1e1e1e;
+                background-color: #f0f0f0;
                 line-height: 1.6;
                 border-radius: 3px;
                 min-width: 0;
                 overflow: hidden;
+                color: white;
+                font-weight: 500;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
             }
             
             .separator {
@@ -194,22 +197,43 @@
         }
         
         function getTimeColor(hour) {
-            // 時間帯に応じた背景色を返す
+            // 時間帯に応じた背景色を返す（白背景用に明るい色に調整）
             if (hour >= 5 && hour < 6) {
                 // 早朝：青
-                return '#2c5f7c';
+                return '#4a90e2';
             } else if (hour >= 6 && hour < 11) {
                 // 朝：水色
-                return '#5b8fa3';
+                return '#87ceeb';
             } else if (hour >= 11 && hour <= 14) {
                 // 昼：オレンジ
-                return '#8b5a2b';
+                return '#ffa500';
             } else if (hour >= 15 && hour <= 18) {
                 // 夕方：紫
-                return '#5d3a6a';
-            } else {
-                // 夜：黒〜暗い色
-                return '#1a1a1a';
+                return '#9370db';
+            } else if (hour === 19) {
+                // 夜の始まり：濃い紫
+                return '#7b68ee';
+            } else if (hour === 20) {
+                // 薄い紺色
+                return '#6a5acd';
+            } else if (hour === 21) {
+                // 紺色
+                return '#4169e1';
+            } else if (hour === 22) {
+                // 濃い紺色
+                return '#364ba0';
+            } else if (hour === 23) {
+                // とても濃い紺色
+                return '#2c3e78';
+            } else if (hour === 0) {
+                // 深夜：濃い藍色
+                return '#191970';
+            } else if (hour >= 1 && hour <= 3) {
+                // 真夜中：とても濃い藍色
+                return '#0f0f3d';
+            } else if (hour === 4) {
+                // 夜明け前：藍色から青への移行
+                return '#2a4d80';
             }
         }
         
@@ -261,8 +285,8 @@
             // 現在時刻を最初の行として追加
             const currentRow = document.createElement('div');
             currentRow.className = 'clock-display';
-            currentRow.style.background = '#272727';
-            currentRow.style.border = '1px solid #444';
+            currentRow.style.background = '#f0f0f0';
+            currentRow.style.border = '1px solid #ddd';
             currentRow.style.borderRadius = '4px';
             currentRow.style.padding = '4px';
             currentRow.style.marginBottom = '8px';
@@ -311,7 +335,7 @@
             
             // 区切り線を追加
             const divider = document.createElement('div');
-            divider.style.borderBottom = '1px solid #444';
+            divider.style.borderBottom = '1px solid #e0e0e0';
             divider.style.margin = '10px 0';
             container.appendChild(divider);
             
