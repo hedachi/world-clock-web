@@ -202,6 +202,7 @@
         <div style="text-align: center; margin-bottom: 10px; font-size: 12px; color: #666;">
             背景パターン: <span id="bgPatternNumber">1</span> / 6
             <button onclick="toggleBgRotation()" style="margin-left: 10px; padding: 2px 8px; font-size: 11px;">一時停止</button>
+            <div id="debugInfo" style="margin-top: 5px; font-size: 10px; color: #999;"></div>
         </div>
         <div id="clockContainer"></div>
     </div>
@@ -238,9 +239,11 @@
             return isPDT(date);
         }
         
-        function getTimeWithOffset(jstTime, offsetHours) {
+        function getTimeWithOffset(jstTime, timeDiff) {
+            // 日本時間から他の地域の時間を計算
+            // timeDiff: 日本との時差（例：-9 = 9時間遅い）
             const time = new Date(jstTime);
-            time.setHours(time.getHours() + offsetHours - 9);
+            time.setHours(time.getHours() + timeDiff);
             return time;
         }
         
@@ -342,29 +345,34 @@
             // 各地域の現在時刻を計算
             const jstNow = new Date();
             
+            // デバッグ情報
+            const currentMonth = jstNow.getMonth() + 1;
+            const debugElement = document.getElementById('debugInfo');
+            debugElement.textContent = `現在: ${currentMonth}月 | BST: ${isBST(jstNow) ? 'Yes' : 'No'} | PDT/EDT: ${isPDT(jstNow) ? 'Yes' : 'No'}`;
+            
             // イギリス
-            let ukNowOffset = 0;
-            const ukNow = getTimeWithOffset(jstNow, ukNowOffset);
+            let ukTimeDiff = -9;  // GMT時の日本との時差
+            const ukNow = getTimeWithOffset(jstNow, ukTimeDiff);
             if (isBST(ukNow)) {
-                ukNowOffset = 1;
+                ukTimeDiff = -8;  // BST時の日本との時差
             }
-            const ukNowAdjusted = getTimeWithOffset(jstNow, ukNowOffset);
+            const ukNowAdjusted = getTimeWithOffset(jstNow, ukTimeDiff);
             
             // サンフランシスコ
-            let sfNowOffset = -17;
-            const sfNow = getTimeWithOffset(jstNow, sfNowOffset);
+            let sfTimeDiff = -17;  // PST時の日本との時差
+            const sfNow = getTimeWithOffset(jstNow, sfTimeDiff);
             if (isPDT(sfNow)) {
-                sfNowOffset = -16;
+                sfTimeDiff = -16;  // PDT時の日本との時差
             }
-            const sfNowAdjusted = getTimeWithOffset(jstNow, sfNowOffset);
+            const sfNowAdjusted = getTimeWithOffset(jstNow, sfTimeDiff);
             
             // ニューヨーク
-            let nyNowOffset = -14;
-            const nyNow = getTimeWithOffset(jstNow, nyNowOffset);
+            let nyTimeDiff = -14;  // EST時の日本との時差
+            const nyNow = getTimeWithOffset(jstNow, nyTimeDiff);
             if (isEDT(nyNow)) {
-                nyNowOffset = -13;
+                nyTimeDiff = -13;  // EDT時の日本との時差
             }
-            const nyNowAdjusted = getTimeWithOffset(jstNow, nyNowOffset);
+            const nyNowAdjusted = getTimeWithOffset(jstNow, nyTimeDiff);
             
             // デスクトップとモバイルで異なるレイアウト
             if (window.innerWidth <= 768) {
@@ -404,28 +412,28 @@
                 
                 // 各地域の時刻を計算
                 // イギリス
-                let ukOffset = 0;
-                const ukTime = getTimeWithOffset(jstTime, ukOffset);
+                let ukTimeDiff = -9;  // GMT時の日本との時差
+                const ukTime = getTimeWithOffset(jstTime, ukTimeDiff);
                 if (isBST(ukTime)) {
-                    ukOffset = 1;
+                    ukTimeDiff = -8;  // BST時の日本との時差
                 }
-                const ukTimeAdjusted = getTimeWithOffset(jstTime, ukOffset);
+                const ukTimeAdjusted = getTimeWithOffset(jstTime, ukTimeDiff);
                 
                 // サンフランシスコ
-                let sfOffset = -17;
-                const sfTime = getTimeWithOffset(jstTime, sfOffset);
+                let sfTimeDiff = -17;  // PST時の日本との時差
+                const sfTime = getTimeWithOffset(jstTime, sfTimeDiff);
                 if (isPDT(sfTime)) {
-                    sfOffset = -16;
+                    sfTimeDiff = -16;  // PDT時の日本との時差
                 }
-                const sfTimeAdjusted = getTimeWithOffset(jstTime, sfOffset);
+                const sfTimeAdjusted = getTimeWithOffset(jstTime, sfTimeDiff);
                 
                 // ニューヨーク
-                let nyOffset = -14;
-                const nyTime = getTimeWithOffset(jstTime, nyOffset);
+                let nyTimeDiff = -14;  // EST時の日本との時差
+                const nyTime = getTimeWithOffset(jstTime, nyTimeDiff);
                 if (isEDT(nyTime)) {
-                    nyOffset = -13;
+                    nyTimeDiff = -13;  // EDT時の日本との時差
                 }
-                const nyTimeAdjusted = getTimeWithOffset(jstTime, nyOffset);
+                const nyTimeAdjusted = getTimeWithOffset(jstTime, nyTimeDiff);
                 
                 // 一行で出力
                 const row = document.createElement('div');
