@@ -61,7 +61,7 @@
         }
         
         .container {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             max-width: 900px;
@@ -137,6 +137,7 @@
                 overflow-y: auto;
                 display: flex;
                 flex-direction: column;
+                background-color: rgba(255, 255, 255, 0.9);
             }
             
             h1 {
@@ -470,7 +471,9 @@
         
         function switchBackground() {
             // 現在のクラスを削除
-            document.body.className = document.body.className.replace(/bg-pattern-\d/g, '');
+            for (let i = 1; i <= 6; i++) {
+                document.body.classList.remove(`bg-pattern-${i}`);
+            }
             
             // 次のパターンに切り替え
             currentBgPattern = (currentBgPattern % 6) + 1;
@@ -498,8 +501,10 @@
         }
         
         // 初期設定
-        document.body.classList.add('bg-pattern-1');
-        startBgRotation();
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('bg-pattern-1');
+            startBgRotation();
+        });
     </script>
 </body>
 </html>
