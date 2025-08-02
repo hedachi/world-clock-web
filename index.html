@@ -157,7 +157,6 @@
 <body>
     <div class="container">
         <h1>🌍 世界時計</h1>
-        <div id="debugInfo" style="text-align: center; margin-bottom: 10px; font-size: 10px; color: #999;"></div>
         <div id="clockContainer"></div>
     </div>
 
@@ -298,11 +297,6 @@
             
             // 各地域の現在時刻を計算
             const jstNow = new Date();
-            
-            // デバッグ情報
-            const currentMonth = jstNow.getMonth() + 1;
-            const debugElement = document.getElementById('debugInfo');
-            debugElement.textContent = `現在: ${currentMonth}月 | BST: ${isBST(jstNow) ? 'Yes' : 'No'} | PDT/EDT: ${isPDT(jstNow) ? 'Yes' : 'No'}`;
             
             // イギリス
             let ukTimeDiff = -9;  // GMT時の日本との時差
