@@ -9,21 +9,22 @@
             font-family: 'Courier New', monospace;
             background-color: #1e1e1e;
             color: #d4d4d4;
-            padding: 20px;
+            padding: 10px;
             margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
         }
         
         .container {
             background-color: #2d2d2d;
             border-radius: 8px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             max-width: 900px;
             width: 100%;
+            margin-top: 20px;
         }
         
         h1 {
@@ -40,8 +41,23 @@
             border-radius: 4px;
             font-size: 14px;
             line-height: 1.6;
-            white-space: pre;
+            white-space: nowrap;
             overflow-x: auto;
+        }
+        
+        .time-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .time-item {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px;
+            background-color: #252526;
+            border-radius: 4px;
+            text-align: center;
         }
         
         .clock-display:hover {
@@ -65,13 +81,71 @@
         }
         
         @media (max-width: 768px) {
-            .clock-display {
-                font-size: 12px;
-                padding: 6px 8px;
+            body {
+                padding: 5px;
+                align-items: flex-start;
+                height: 100vh;
+                overflow: hidden;
             }
             
             .container {
-                padding: 20px;
+                padding: 10px;
+                margin-top: 5px;
+                height: calc(100vh - 20px);
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 18px;
+                margin-bottom: 10px;
+                margin-top: 5px;
+            }
+            
+            #clockContainer {
+                flex: 1;
+                overflow-y: auto;
+            }
+            
+            .clock-display {
+                font-size: 12px;
+                padding: 0;
+                white-space: normal;
+                overflow-x: visible;
+                margin-bottom: 6px;
+                background-color: transparent !important;
+                border: none !important;
+            }
+            
+            .time-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3px;
+            }
+            
+            .time-item {
+                padding: 5px;
+                text-align: left;
+                font-size: 12px;
+                background-color: #1e1e1e;
+                line-height: 1.3;
+            }
+            
+            .separator {
+                display: none;
+            }
+            
+            .current-label {
+                display: block;
+                text-align: center;
+                margin-top: 4px;
+                font-size: 12px;
+            }
+            
+            /* 区切り線を非表示 */
+            .clock-display + div[style*="border-bottom"] {
+                display: none !important;
             }
         }
     </style>
@@ -127,7 +201,12 @@
             const hour = date.getHours();
             const minute = date.getMinutes();
             
-            return `<span class="time-label">${label}</span> <span class="date">${month.toString().padStart(2, ' ')}/${day.toString().padStart(2, ' ')}</span><span class="day">(${wday})</span> ${hour.toString().padStart(2, ' ')}:${minute.toString().padStart(2, '0')}`;
+            if (window.innerWidth <= 768) {
+                // モバイル版: よりコンパクトな表示
+                return `<span class="time-label">${label}</span><br><span class="date">${month}/${day}</span><span class="day">(${wday})</span> ${hour}:${minute.toString().padStart(2, '0')}`;
+            } else {
+                return `<span class="time-label">${label}</span> <span class="date">${month.toString().padStart(2, ' ')}/${day.toString().padStart(2, ' ')}</span><span class="day">(${wday})</span> ${hour.toString().padStart(2, ' ')}:${minute.toString().padStart(2, '0')}`;
+            }
         }
         
         function updateClocks() {
@@ -181,7 +260,20 @@
             }
             const nyNowAdjusted = getTimeWithOffset(jstNow, nyNowOffset);
             
-            currentRow.innerHTML = `${formatTime(jstNow, '日本')} <span class="separator">|</span> ${formatTime(ukNowAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfNowAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyNowAdjusted, 'NY')} <span style="color: #4ec9b0; margin-left: 10px;">【現在】</span>`;
+            // デスクトップとモバイルで異なるレイアウト
+            if (window.innerWidth <= 768) {
+                currentRow.innerHTML = `
+                    <div class="time-group">
+                        <div class="time-item">${formatTime(jstNow, '日本')}</div>
+                        <div class="time-item">${formatTime(ukNowAdjusted, 'イギリス')}</div>
+                        <div class="time-item">${formatTime(sfNowAdjusted, 'SF')}</div>
+                        <div class="time-item">${formatTime(nyNowAdjusted, 'NY')}</div>
+                    </div>
+                    <span class="current-label" style="color: #4ec9b0;">【現在】</span>
+                `;
+            } else {
+                currentRow.innerHTML = `${formatTime(jstNow, '日本')} <span class="separator">|</span> ${formatTime(ukNowAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfNowAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyNowAdjusted, 'NY')} <span style="color: #4ec9b0; margin-left: 10px;">【現在】</span>`;
+            }
             container.appendChild(currentRow);
             
             // 区切り線を追加
@@ -233,7 +325,20 @@
                 // 一行で出力
                 const row = document.createElement('div');
                 row.className = 'clock-display';
-                row.innerHTML = `${formatTime(jstTime, '日本')} <span class="separator">|</span> ${formatTime(ukTimeAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfTimeAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyTimeAdjusted, 'NY')}`;
+                
+                // デスクトップとモバイルで異なるレイアウト
+                if (window.innerWidth <= 768) {
+                    row.innerHTML = `
+                        <div class="time-group">
+                            <div class="time-item">${formatTime(jstTime, '日本')}</div>
+                            <div class="time-item">${formatTime(ukTimeAdjusted, 'イギリス')}</div>
+                            <div class="time-item">${formatTime(sfTimeAdjusted, 'SF')}</div>
+                            <div class="time-item">${formatTime(nyTimeAdjusted, 'NY')}</div>
+                        </div>
+                    `;
+                } else {
+                    row.innerHTML = `${formatTime(jstTime, '日本')} <span class="separator">|</span> ${formatTime(ukTimeAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfTimeAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyTimeAdjusted, 'NY')}`;
+                }
                 
                 container.appendChild(row);
             });
@@ -244,6 +349,15 @@
         
         // 1秒ごとに更新
         setInterval(updateClocks, 1000);
+        
+        // ウィンドウリサイズ時に再描画
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updateClocks();
+            }, 250);
+        });
     </script>
 </body>
 </html>
