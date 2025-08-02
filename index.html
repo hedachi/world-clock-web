@@ -195,10 +195,13 @@
         
         function getTimeColor(hour) {
             // 時間帯に応じた背景色を返す
-            if (hour >= 5 && hour <= 8) {
-                // 朝：青〜水色
+            if (hour >= 5 && hour < 6) {
+                // 早朝：青
                 return '#2c5f7c';
-            } else if (hour >= 9 && hour <= 14) {
+            } else if (hour >= 6 && hour < 11) {
+                // 朝：水色
+                return '#5b8fa3';
+            } else if (hour >= 11 && hour <= 14) {
                 // 昼：オレンジ
                 return '#8b5a2b';
             } else if (hour >= 15 && hour <= 18) {
