@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界時計</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #569cd6;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .clock-display {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background-color: #1e1e1e;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .clock-display:hover {
+            background-color: #252526;
+        }
+        
+        .time-label {
+            color: #4ec9b0;
+        }
+        
+        .date {
+            color: #dcdcaa;
+        }
+        
+        .day {
+            color: #ce9178;
+        }
+        
+        .separator {
+            color: #808080;
+        }
+        
+        @media (max-width: 768px) {
+            .clock-display {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 世界時計</h1>
+        <div id="clockContainer"></div>
+    </div>
+
+    <script>
+        const wdays = ['日', '月', '火', '水', '木', '金', '土'];
+        const baseHours = [0, 4, 8, 12, 16, 20];
+        
+        function isBST(date) {
+            const month = date.getMonth() + 1;
+            if (month < 3 || month > 10) return false;
+            if (month > 3 && month < 10) return true;
+            
+            if (month === 3) {
+                return date.getDate() >= 25;
+            } else {
+                return date.getDate() < 25;
+            }
+        }
+        
+        function isPDT(date) {
+            const month = date.getMonth() + 1;
+            if (month < 3 || month > 11) return false;
+            if (month > 3 && month < 11) return true;
+            
+            if (month === 3) {
+                return date.getDate() >= 10;
+            } else {
+                return date.getDate() < 7;
+            }
+        }
+        
+        function isEDT(date) {
+            return isPDT(date);
+        }
+        
+        function getTimeWithOffset(jstTime, offsetHours) {
+            const time = new Date(jstTime);
+            time.setHours(time.getHours() + offsetHours - 9);
+            return time;
+        }
+        
+        function formatTime(date, label) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const wday = wdays[date.getDay()];
+            const hour = date.getHours();
+            const minute = date.getMinutes();
+            
+            return `<span class="time-label">${label}</span> <span class="date">${month.toString().padStart(2, ' ')}/${day.toString().padStart(2, ' ')}</span><span class="day">(${wday})</span> ${hour.toString().padStart(2, ' ')}:${minute.toString().padStart(2, '0')}`;
+        }
+        
+        function updateClocks() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // 現在時刻に最も近い基準時刻を見つける
+            let startIndex = 0;
+            baseHours.forEach((hour, index) => {
+                if (currentHour >= hour) {
+                    startIndex = index;
+                }
+            });
+            
+            // 基準時刻を並び替え
+            const sortedHours = [...baseHours.slice(startIndex), ...baseHours.slice(0, startIndex)];
+            
+            const container = document.getElementById('clockContainer');
+            container.innerHTML = '';
+            
+            // 現在時刻を最初の行として追加
+            const currentRow = document.createElement('div');
+            currentRow.className = 'clock-display';
+            currentRow.style.background = '#2a2d2e';
+            currentRow.style.border = '1px solid #569cd6';
+            
+            // 各地域の現在時刻を計算
+            const jstNow = new Date();
+            
+            // イギリス
+            let ukNowOffset = 0;
+            const ukNow = getTimeWithOffset(jstNow, ukNowOffset);
+            if (isBST(ukNow)) {
+                ukNowOffset = 1;
+            }
+            const ukNowAdjusted = getTimeWithOffset(jstNow, ukNowOffset);
+            
+            // サンフランシスコ
+            let sfNowOffset = -17;
+            const sfNow = getTimeWithOffset(jstNow, sfNowOffset);
+            if (isPDT(sfNow)) {
+                sfNowOffset = -16;
+            }
+            const sfNowAdjusted = getTimeWithOffset(jstNow, sfNowOffset);
+            
+            // ニューヨーク
+            let nyNowOffset = -14;
+            const nyNow = getTimeWithOffset(jstNow, nyNowOffset);
+            if (isEDT(nyNow)) {
+                nyNowOffset = -13;
+            }
+            const nyNowAdjusted = getTimeWithOffset(jstNow, nyNowOffset);
+            
+            currentRow.innerHTML = `${formatTime(jstNow, '日本')} <span class="separator">|</span> ${formatTime(ukNowAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfNowAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyNowAdjusted, 'NY')} <span style="color: #4ec9b0; margin-left: 10px;">【現在】</span>`;
+            container.appendChild(currentRow);
+            
+            // 区切り線を追加
+            const divider = document.createElement('div');
+            divider.style.borderBottom = '1px solid #444';
+            divider.style.margin = '10px 0';
+            container.appendChild(divider);
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            sortedHours.forEach((hour, index) => {
+                const useDate = new Date(today);
+                
+                // 現在時刻より前の時間は明日の日付にする
+                if (index > 0 && hour < sortedHours[0]) {
+                    useDate.setDate(useDate.getDate() + 1);
+                }
+                
+                // 日本時間を基準にする
+                const jstTime = new Date(useDate);
+                jstTime.setHours(hour, 0, 0, 0);
+                
+                // 各地域の時刻を計算
+                // イギリス
+                let ukOffset = 0;
+                const ukTime = getTimeWithOffset(jstTime, ukOffset);
+                if (isBST(ukTime)) {
+                    ukOffset = 1;
+                }
+                const ukTimeAdjusted = getTimeWithOffset(jstTime, ukOffset);
+                
+                // サンフランシスコ
+                let sfOffset = -17;
+                const sfTime = getTimeWithOffset(jstTime, sfOffset);
+                if (isPDT(sfTime)) {
+                    sfOffset = -16;
+                }
+                const sfTimeAdjusted = getTimeWithOffset(jstTime, sfOffset);
+                
+                // ニューヨーク
+                let nyOffset = -14;
+                const nyTime = getTimeWithOffset(jstTime, nyOffset);
+                if (isEDT(nyTime)) {
+                    nyOffset = -13;
+                }
+                const nyTimeAdjusted = getTimeWithOffset(jstTime, nyOffset);
+                
+                // 一行で出力
+                const row = document.createElement('div');
+                row.className = 'clock-display';
+                row.innerHTML = `${formatTime(jstTime, '日本')} <span class="separator">|</span> ${formatTime(ukTimeAdjusted, 'イギリス')} <span class="separator">|</span> ${formatTime(sfTimeAdjusted, 'SF')} <span class="separator">|</span> ${formatTime(nyTimeAdjusted, 'NY')}`;
+                
+                container.appendChild(row);
+            });
+        }
+        
+        // 初回実行
+        updateClocks();
+        
+        // 1秒ごとに更新
+        setInterval(updateClocks, 1000);
+    </script>
+</body>
+</html>
