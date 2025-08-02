@@ -15,6 +15,49 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            transition: background 1s ease;
+            position: relative;
+        }
+        
+        /* 背景パターン1: 縦グラデーション（空） */
+        body.bg-pattern-1 {
+            background: linear-gradient(to bottom, #e6f3ff 0%, #fff5e6 100%);
+        }
+        
+        /* 背景パターン2: 斜めグラデーション（紫→ピンク） */
+        body.bg-pattern-2 {
+            background: linear-gradient(135deg, #f3e8ff 0%, #ffe8f3 100%);
+        }
+        
+        /* 背景パターン3: 放射状グラデーション */
+        body.bg-pattern-3 {
+            background: radial-gradient(circle at center, #ffffff 0%, #faf8f3 100%);
+        }
+        
+        /* 背景パターン4: ドットパターン */
+        body.bg-pattern-4 {
+            background-color: #fafafa;
+            background-image: radial-gradient(circle, #f0f0f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* 背景パターン5: 斜めストライプ */
+        body.bg-pattern-5 {
+            background: repeating-linear-gradient(
+                45deg,
+                #ffffff,
+                #ffffff 10px,
+                #f8f8f8 10px,
+                #f8f8f8 20px
+            );
+        }
+        
+        /* 背景パターン6: 波模様 */
+        body.bg-pattern-6 {
+            background: 
+                radial-gradient(ellipse at top, #e6f3ff 0%, transparent 70%),
+                radial-gradient(ellipse at bottom, #fff5e6 0%, transparent 70%),
+                #f5f8fa;
         }
         
         .container {
@@ -155,6 +198,10 @@
 <body>
     <div class="container">
         <h1>🌍 世界時計</h1>
+        <div style="text-align: center; margin-bottom: 10px; font-size: 12px; color: #666;">
+            背景パターン: <span id="bgPatternNumber">1</span> / 6
+            <button onclick="toggleBgRotation()" style="margin-left: 10px; padding: 2px 8px; font-size: 11px;">一時停止</button>
+        </div>
         <div id="clockContainer"></div>
     </div>
 
@@ -415,6 +462,44 @@
                 updateClocks();
             }, 250);
         });
+        
+        // 背景パターンの切り替え機能
+        let currentBgPattern = 1;
+        let bgRotationInterval;
+        let isRotating = true;
+        
+        function switchBackground() {
+            // 現在のクラスを削除
+            document.body.className = document.body.className.replace(/bg-pattern-\d/g, '');
+            
+            // 次のパターンに切り替え
+            currentBgPattern = (currentBgPattern % 6) + 1;
+            document.body.classList.add(`bg-pattern-${currentBgPattern}`);
+            
+            // 表示を更新
+            document.getElementById('bgPatternNumber').textContent = currentBgPattern;
+        }
+        
+        function startBgRotation() {
+            bgRotationInterval = setInterval(switchBackground, 5000);
+        }
+        
+        function toggleBgRotation() {
+            const button = event.target;
+            if (isRotating) {
+                clearInterval(bgRotationInterval);
+                button.textContent = '再開';
+                isRotating = false;
+            } else {
+                startBgRotation();
+                button.textContent = '一時停止';
+                isRotating = true;
+            }
+        }
+        
+        // 初期設定
+        document.body.classList.add('bg-pattern-1');
+        startBgRotation();
     </script>
 </body>
 </html>
