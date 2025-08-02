@@ -193,6 +193,23 @@
             return time;
         }
         
+        function getTimeColor(hour) {
+            // 時間帯に応じた背景色を返す
+            if (hour >= 5 && hour <= 8) {
+                // 朝：青〜水色
+                return '#2c5f7c';
+            } else if (hour >= 9 && hour <= 14) {
+                // 昼：オレンジ
+                return '#8b5a2b';
+            } else if (hour >= 15 && hour <= 18) {
+                // 夕方：紫
+                return '#5d3a6a';
+            } else {
+                // 夜：黒〜暗い色
+                return '#1a1a1a';
+            }
+        }
+        
         function formatTime(date, label) {
             const month = date.getMonth() + 1;
             const day = date.getDate();
@@ -278,10 +295,10 @@
             if (window.innerWidth <= 768) {
                 currentRow.innerHTML = `
                     <div class="time-group">
-                        <div class="time-item" style="background: #252525;">${formatTime(jstNow, '日本')}</div>
-                        <div class="time-item" style="background: #252525;">${formatTime(ukNowAdjusted, 'イギリス')}</div>
-                        <div class="time-item" style="background: #252525;">${formatTime(sfNowAdjusted, 'SF')}</div>
-                        <div class="time-item" style="background: #252525;">${formatTime(nyNowAdjusted, 'NY')}</div>
+                        <div class="time-item" style="background: ${getTimeColor(jstNow.getHours())};">${formatTime(jstNow, '日本')}</div>
+                        <div class="time-item" style="background: ${getTimeColor(ukNowAdjusted.getHours())};">${formatTime(ukNowAdjusted, 'イギリス')}</div>
+                        <div class="time-item" style="background: ${getTimeColor(sfNowAdjusted.getHours())};">${formatTime(sfNowAdjusted, 'SF')}</div>
+                        <div class="time-item" style="background: ${getTimeColor(nyNowAdjusted.getHours())};">${formatTime(nyNowAdjusted, 'NY')}</div>
                     </div>
                 `;
             } else {
@@ -343,10 +360,10 @@
                 if (window.innerWidth <= 768) {
                     row.innerHTML = `
                         <div class="time-group">
-                            <div class="time-item">${formatTime(jstTime, '日本')}</div>
-                            <div class="time-item">${formatTime(ukTimeAdjusted, 'イギリス')}</div>
-                            <div class="time-item">${formatTime(sfTimeAdjusted, 'SF')}</div>
-                            <div class="time-item">${formatTime(nyTimeAdjusted, 'NY')}</div>
+                            <div class="time-item" style="background: ${getTimeColor(jstTime.getHours())};">${formatTime(jstTime, '日本')}</div>
+                            <div class="time-item" style="background: ${getTimeColor(ukTimeAdjusted.getHours())};">${formatTime(ukTimeAdjusted, 'イギリス')}</div>
+                            <div class="time-item" style="background: ${getTimeColor(sfTimeAdjusted.getHours())};">${formatTime(sfTimeAdjusted, 'SF')}</div>
+                            <div class="time-item" style="background: ${getTimeColor(nyTimeAdjusted.getHours())};">${formatTime(nyTimeAdjusted, 'NY')}</div>
                         </div>
                     `;
                 } else {
